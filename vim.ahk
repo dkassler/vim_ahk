@@ -22,6 +22,7 @@ GroupAdd VimGroup, ahk_exe Code.exe ; Visual Studio Code
 GroupAdd VimGroup, ahk_exe onenote.exe ; OneNote Desktop
 GroupAdd VimGroup, OneNote ; OneNote in Windows 10
 GroupAdd VimGroup, ahk_exe OUTLOOK.exe ; Outlook
+GroupAdd VimGroup, ahk_exe chrome.exe; google chrome
 
 ; Following application select the line break at Shift + End.
 GroupAdd LBSelect, ahk_exe POWERPNT.exe ; PowerPoint
@@ -1109,3 +1110,25 @@ Return
 
 ; vim: foldmethod=marker
 ; vim: foldmarker={{{,}}}
+
+Gui +LastFound 
+hWnd := WinExist()
+DllCall( "RegisterShellHookWindow", UInt,Hwnd )
+MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
+OnMessage( MsgNum, "ShellMessage" )
+Return
+
+ShellMessage( wParam,lParam )
+{
+ WinGetTitle, title, ahk_id %lParam%
+ If (wParam=4) or (wParam=32772) { ;HSHELL_WINDOWACTIVATED
+  If WinActive("ahk_group VimGroup") {
+    SplashTextOn, , , Mode: %VimMode%
+    ;WinSet, Transparent, 200, Mode
+    WinGetPos,,, Width, Height, Mode
+    WinMove, Mode,, A_ScreenWidth - Width - 20, A_ScreenHeight - Height - 60
+  } else {
+    SplashTextOff
+  }
+ }
+}

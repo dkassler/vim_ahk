@@ -1,5 +1,11 @@
 ﻿; Auto-execute section {{{
 
+SplashTextOn, , , Mode: "Insert"
+;WinSet, Transparent, 200, Mode
+WinGetPos,,, Width, Height, Mode
+WinMove, Mode,, A_ScreenWidth - Width - 20, A_ScreenHeight - Height - 60
+
+
 ; Application groups
 
 ; Enable vim mode for following applications
@@ -15,6 +21,7 @@ GroupAdd VimGroup, ahk_exe Evernote.exe ; Evernote
 GroupAdd VimGroup, ahk_exe Code.exe ; Visual Studio Code
 GroupAdd VimGroup, ahk_exe onenote.exe ; OneNote Desktop
 GroupAdd VimGroup, OneNote ; OneNote in Windows 10
+GroupAdd VimGroup, ahk_exe OUTLOOK.exe ; Outlook
 
 ; Following application select the line break at Shift + End.
 GroupAdd LBSelect, ahk_exe POWERPNT.exe ; PowerPoint
@@ -42,6 +49,22 @@ VimLastIME := 0
 
 Return
 ; }}}
+
+ScrollLock::
+  Suspend
+  if ( GetKeyState("ScrollLock", "T") ) { ; this will be 'true' if ScrollLock is toggled 'on'
+    Suspend, On
+    Send, {ScrollLock}
+    SplashTextOff
+  } else {
+    Suspend, Off
+    Send, {ScrollLock}
+    SplashTextOn, , , Mode: %VimMode%
+    ;WinSet, Transparent, 200, Mode
+    WinGetPos,,, Width, Height, Mode
+    WinMove, Mode,, A_ScreenWidth - Width - 20, A_ScreenHeight - Height - 60
+  }
+Return
 
 ; Settings {{{
 
@@ -138,13 +161,13 @@ SetIcon(Mode=""){
   }
   icon :=
   if InStr(Mode, "Normal"){
-    icon := % A_LineFile . "\..\icons\normal.ico"
+    icon := % A_LineFile . "\icons\normal.ico"
   }else if InStr(Mode, "Insert"){
-    icon := % A_LineFile . "\..\icons\insert.ico"
+    icon := % A_LineFile . "\icons\insert.ico"
   }else if InStr(Mode, "Visual"){
-    icon := % A_LineFile . "\..\icons\visual.ico"
+    icon := % A_LineFile . "\icons\visual.ico"
   }else if InStr(Mode, "Command"){
-    icon := % A_LineFile . "\..\icons\command.ico"
+    icon := % A_LineFile . "\icons\command.ico"
   }else if InStr(Mode, "Disabled"){
     icon := A_AhkPath ; Default icon
     ;icon := % A_LineFile . "\..\icons/\isabled.ico"
@@ -172,6 +195,14 @@ VimSetMode(Mode="", g=0, n=0, LineCopy=-1){
   if(LineCopy!=-1){
     VimLineCopy := LineCopy
   }
+  IfWinNotExist, Mode:
+  {
+    SplashTextOn, , , Mode: %VimMode%
+    ;WinSet, Transparent, 200, Mode
+    WinGetPos,,, Width, Height, Mode
+    WinMove, Mode,, A_ScreenWidth - Width - 20, A_ScreenHeight - Height - 60
+  }
+  WinSetTitle, Mode, , Mode: %VimMode%
   VimCheckMode(VimVerbose, Mode, g, n, LineCopy)
   Return
 }
@@ -877,7 +908,7 @@ Return
 #If WInActive("ahk_group VimGroup") and (VimMode == "Vim_Normal")
 /::
   Send, ^f
-  VimSetMode("Inseret")
+  VimSetMode("Insert")
 Return
 
 *::
@@ -888,7 +919,7 @@ Return
   Send, ^f
   Send, ^v!f
   clipboard := bak
-  VimSetMode("Inseret")
+  VimSetMode("Insert")
 Return
 
 n::Send, {F3}

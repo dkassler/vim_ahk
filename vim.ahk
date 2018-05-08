@@ -1,5 +1,7 @@
 ﻿; Auto-execute section {{{
 
+; #Include %A_ScriptDir%\..\screen_border3.ahk
+
 SplashTextOn, , , Mode: "Insert"
 ;WinSet, Transparent, 200, Mode
 WinGetPos,,, Width, Height, Mode

@@ -24,7 +24,7 @@ GroupAdd VimGroup, ahk_exe Code.exe ; Visual Studio Code
 GroupAdd VimGroup, ahk_exe onenote.exe ; OneNote Desktop
 GroupAdd VimGroup, OneNote ; OneNote in Windows 10
 GroupAdd VimGroup, ahk_exe OUTLOOK.exe ; Outlook
-GroupAdd VimGroup, ahk_exe chrome.exe; google chrome
+; GroupAdd VimGroup, ahk_exe chrome.exe; google chrome
 
 ; Following application select the line break at Shift + End.
 GroupAdd LBSelect, ahk_exe POWERPNT.exe ; PowerPoint
